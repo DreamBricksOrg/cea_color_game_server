@@ -1,9 +1,9 @@
 import structlog
-from flask import Flask, render_template
+from flask import Flask, render_template, send_file
 import logging
 import sys
 from image_controller import ImageController
-from log_sender import save_csv_additional
+from log_sender import save_csv
 import threading
 import parameters as pm
 from qrcodeaux import generate_qr_code
@@ -39,7 +39,7 @@ app = Flask(__name__)
 # Logger estruturado
 logger = structlog.get_logger()
 
-image_controller = ImageController(image_directory=pm.IMAGE_FILE)
+image_controller = ImageController()
 
 # init_csv(csv_filename)
 # init_csv(backup_filename)
@@ -56,15 +56,22 @@ def hello_world():
 def get_qrcode_score():
     image_id = image_controller.get_most_recent_file()
     qr_image = generate_qr_code(
-        pm.BASE_URL + '/download_image/' + image_id)
+        pm.BASE_URL + '/download_image_page/' + image_id)
     return send_file(qr_image, mimetype='image/png')
 
-
-@app.route('/download_image_page/<filename>')
+@app.route('/download_image/<filename>')
 def download_image(filename):
     if image_controller.check_image_exists(filename):
-        # save_csv_additional("ACESSOU_QR_CODE",pm.PLACE)
         return send_file(image_controller.get_image_path(filename), mimetype='image/png')
+    else:
+        return render_template('error.html', message="File not found"), 404
+        
+@app.route('/download_image_page/<filename>')
+def download_image_page(filename):
+    if image_controller.check_image_exists(filename):
+        # save_csv("ACESSOU_QR_CODE")
+        image_url = f"/download_image/{filename}"
+        return render_template('download.html', image_url=image_url)
     else:
         return render_template('error.html', message="File not found"), 404
 

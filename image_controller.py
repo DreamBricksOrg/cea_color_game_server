@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 class ImageController:
     """Controlador para operações com imagens PNG."""
     
-    def __init__(self, image_directory="static/images"):
+    def __init__(self, image_directory="static/draw_images"):
         """
         Inicializa o controlador de imagens.
         
