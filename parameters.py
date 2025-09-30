@@ -1,0 +1,5 @@
+BASE_URL = "http://127.0.0.1:5000"
+DIRECTORY = "data"
+IMAGE_FILE = r"C:/Users/db/AppData/LocalLow/dreambricks/cea_color_game"
+LOG_PROJECT_ID = "68db20362c863456a0476533"
+LOG_API = "https://dbutils.ddns.net"
