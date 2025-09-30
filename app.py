@@ -3,8 +3,8 @@ from flask import Flask, render_template, send_file
 import logging
 import sys
 from image_controller import ImageController
-from log_sender import save_csv
 import threading
+from log_sender import backup_filename, csv_filename, init_csv, process_csv_and_send_logs, save_csv
 import parameters as pm
 from qrcodeaux import generate_qr_code
 
@@ -41,10 +41,10 @@ logger = structlog.get_logger()
 
 image_controller = ImageController()
 
-# init_csv(csv_filename)
-# init_csv(backup_filename)
+init_csv(csv_filename)
+init_csv(backup_filename)
 
-# threading.Thread(target=process_csv_and_send_logs, args=(csv_filename, backup_filename), daemon=True).start()
+threading.Thread(target=process_csv_and_send_logs, args=(csv_filename, backup_filename), daemon=True).start()
 
 @app.route('/')
 def hello_world():
@@ -69,7 +69,7 @@ def download_image(filename):
 @app.route('/download_image_page/<filename>')
 def download_image_page(filename):
     if image_controller.check_image_exists(filename):
-        # save_csv("ACESSOU_QR_CODE")
+        save_csv("ACESSOU_QR_CODE")
         image_url = f"/download_image/{filename}"
         return render_template('download.html', image_url=image_url)
     else:
